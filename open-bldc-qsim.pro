@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl
+QT       += core gui opengl printsupport widgets
 
 TARGET = open-bldc-qsim
 TEMPLATE = app
@@ -34,11 +34,16 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 macx {
-    LIBS += -L/opt/local/lib
-    INCLUDEPATH += /opt/local/include
+    LIBS += -L/usr/local/lib
+    INCLUDEPATH += /usr/local/include
 }
 
 LIBS += -lgsl
+
+linux {
+    LIBS += -lgslcblas
+}
+
 
 RESOURCES += \
     main.qrc

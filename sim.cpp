@@ -30,8 +30,7 @@ Sim::Sim(QObject *parent) :
 {
     shouldQuit = false;
     time = 0.0;
-    sendDataTimer.setInterval(100);
-    sendDataTimer.setSingleShot(true);
+    sendDataTimer = NULL;
     dataTimes = NULL;
     dataValues = NULL;
 
@@ -67,6 +66,9 @@ Sim::Sim(QObject *parent) :
 
 Sim::~Sim()
 {
+    if (sendDataTimer != NULL) {
+        delete sendDataTimer;
+    }
     qDebug() << "Deleting simulator...";
 }
 
@@ -74,7 +76,13 @@ void Sim::start()
 {
     qDebug() << "Hello from the simulator thread " << thread()->currentThreadId();
 
-    sendDataTimer.start();
+    if (sendDataTimer == NULL) {
+        qDebug() << "Creating new QTimer";
+        sendDataTimer = new QTimer;
+        sendDataTimer->setInterval(100);
+        sendDataTimer->setSingleShot(true);
+    }
+    sendDataTimer->start();
 
     gsl_odeiv2_system sys = {dyn, NULL, 5, &params};
 
@@ -127,12 +135,12 @@ void Sim::start()
             ++count;
         }
 
-        if (!sendDataTimer.isActive()) {
+        if (sendDataTimer->remainingTime() == 0) {
             //qDebug() << "Adding " << dataTimes->count() << " data points from " << dataTimes->first() << " to " << dataTimes->last();
             emit newDataPoints(dataTimes, dataValues);
             dataTimes = NULL;
             dataValues = NULL;
-            sendDataTimer.start();
+            sendDataTimer->start();
         }
 
         setpointMutex.lock();
@@ -148,7 +156,7 @@ void Sim::start()
 
     gsl_odeiv2_driver_free (d);
 
-    sendDataTimer.stop();
+    sendDataTimer->stop();
 
     qDebug() << "Finished generating and sending data.";
     emit finished();

@@ -39,7 +39,7 @@ public:
 
 private:
     double time;
-    QTimer sendDataTimer;
+    QTimer *sendDataTimer;
     bool shouldQuit;
     QMutex shouldQuitMutex;
     QVector<double> *dataTimes;

@@ -44,7 +44,7 @@ void SignalPlot::setupPlot()
     xAxis->setNumberPrecision(3);
     xAxis->setAutoTickStep(false);
     xAxis->setTickStep(0.05);
-    setupFullAxesBox();
+    axisRect()->setupFullAxesBox();
 
     xAxis->setLabel("Time (s)");
 
