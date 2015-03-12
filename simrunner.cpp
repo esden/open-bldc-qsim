@@ -25,11 +25,15 @@ SimRunner::SimRunner(QObject *parent) :
 {
     running = false;
     thread = NULL;
-    sim = new Sim();
+    sim = NULL;
 }
 
 void SimRunner::runSim(void)
 {
+
+    if (sim == NULL) {
+        sim = new Sim();
+    }
 
     if ((thread == NULL) || (thread->isFinished())) {
         running = true;
@@ -59,6 +63,14 @@ void SimRunner::onNewDataPoints(QVector<double> *dataTimes, QVector<QVector<doub
 void SimRunner::simFinished()
 {
     qDebug() << "Simulator finished signal...";
+    running = false;
+    qDebug() << "Starting to wait for the thread...";
+    thread->wait();
+    delete sim;
+    delete thread;
+    thread = NULL;
+    sim = NULL;
+    qDebug() << "Cleaned up simulator.";
 }
 
 void SimRunner::stopSim()
@@ -73,5 +85,14 @@ void SimRunner::setPWMDuty(double duty)
 
 double SimRunner::getPWMDuty()
 {
-    return sim->getPWMDuty();
+    if (sim == NULL) {
+        return 0;
+    } else {
+        return sim->getPWMDuty();
+    }
+}
+
+bool SimRunner::isRunning()
+{
+    return running;
 }

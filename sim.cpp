@@ -154,12 +154,14 @@ void Sim::start()
         shouldQuitMutex.unlock();
     }
 
-    gsl_odeiv2_driver_free (d);
+    gsl_odeiv2_driver_free(d);
 
     sendDataTimer->stop();
 
     qDebug() << "Finished generating and sending data.";
     emit finished();
+
+    thread()->exit(0);
 }
 
 void Sim::stopSim()

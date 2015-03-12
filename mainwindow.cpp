@@ -73,7 +73,21 @@ void MainWindow::on_PWMDutySendLockButton_toggled(bool checked)
 
 void MainWindow::on_actionRunSim_triggered()
 {
-    ui->actionRunSim->setEnabled(false);
-    ui->actionRunSim->setIcon(QIcon(":/icons/stop_sim_inactive.png"));
-    emit runSim();
+    if(!sr->isRunning()) {
+        ui->actionRunSim->setEnabled(false);
+        ui->actionRunSim->setIcon(QIcon(":/icons/stop_sim_inactive.png"));
+        emit runSim();
+
+        /* This should probably be done due to a signal from the sim runner. */
+        ui->actionRunSim->setEnabled(true);
+        ui->actionRunSim->setIcon(QIcon(":/icons/stop_sim_active.png"));
+    } else {
+        ui->actionRunSim->setEnabled(false);
+        ui->actionRunSim->setIcon(QIcon(":/icons/run_sim_inactive.png"));
+        sr->stopSim();
+
+        /* This should probably be done due to a signal from sim runner. */
+        ui->actionRunSim->setEnabled(true);
+        ui->actionRunSim->setIcon(QIcon(":icons/run_sim_active.png"));
+    }
 }

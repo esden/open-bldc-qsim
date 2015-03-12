@@ -30,6 +30,7 @@ public:
     explicit SimRunner(QObject *parent = 0);
     void setPWMDuty(double duty);
     double getPWMDuty(void);
+    bool isRunning(void);
 
 private:
     QThread *thread;
